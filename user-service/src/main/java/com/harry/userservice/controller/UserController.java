@@ -69,9 +69,9 @@ public class UserController {
         UserResponse userX = userService.findByUserId(userIdLong);
         Department dept = new Department();
         dept.setDepartmentId(1101L);
-        dept.setDepartmentName("setDepartmentName");
-        dept.setDepartmentCode("setDepartmentCode");
-        dept.setDepartmentAddress("setDepartmentAddress");
+        dept.setDepartmentName("setDepartmentName-dummy");
+        dept.setDepartmentCode("setDepartmentCode--dummy");
+        dept.setDepartmentAddress("setDepartmentAddress--dummy fallback");
 
         ResponseTemplateVO vo = new ResponseTemplateVO();
         vo.setStatus(1);
