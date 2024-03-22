@@ -57,7 +57,7 @@ public class UserService {
     }
 
     public ResponseTemplateVO getUserWithDepartment(Long userIdLong) {
-        log.info("UserService =======> findByUserId()=" + userIdLong);
+        log.info("UserService =======> getUserWithDepartment()=" + userIdLong);
         UserResponse userX = findByUserId(userIdLong);
         Department dept = restTemplate.getForObject("http://DEPARTMENT-SERVICE/departments/find/" + userIdLong,
                 Department.class);

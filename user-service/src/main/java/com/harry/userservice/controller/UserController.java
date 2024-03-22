@@ -1,6 +1,8 @@
 package com.harry.userservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,12 +11,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import com.harry.userservice.VO.Department;
 import com.harry.userservice.VO.ResponseTemplateVO;
 import com.harry.userservice.entity.UserX;
 import com.harry.userservice.service.UserService;
 
+import brave.http.HttpResponse;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
-
 
 @RestController
 @Slf4j
@@ -32,7 +38,7 @@ public class UserController {
 
     @GetMapping("/findAll")
     public List<UserX> findAll() {
-        log.info("UserController =======> findAll()" );
+        log.info("UserController =======> findAll()");
         return userService.findAll();
     }
 
@@ -42,10 +48,37 @@ public class UserController {
         return userService.findByUserId(userIdLong);
     }
 
+    int retryCount = 1;
+
     @GetMapping("/vo/{id}")
-    public ResponseTemplateVO getUserWithDepartment(@PathVariable("id") Long userIdLong) {
+    @CircuitBreaker(name = "userDeptBreaker", fallbackMethod = "userDeptFallback")
+    @Retry(name = "userDeptRetry", fallbackMethod = "userDeptFallback")
+    public ResponseEntity<ResponseTemplateVO> getUserWithDepartment(@PathVariable("id") Long userIdLong) {
         log.info("UserController =======> getUserWithDepartment()" + userIdLong);
-        return userService.getUserWithDepartment(userIdLong);
+        log.info("retryCount=====> {}", retryCount);
+        retryCount++;
+        if (retryCount > 3)
+            retryCount = 1;
+        ResponseTemplateVO vo = userService.getUserWithDepartment(userIdLong);
+        return new ResponseEntity<>(vo, HttpStatus.OK);
     }
-    
+
+    // creatting fallback method for Circuit-Breaker and retry
+    public ResponseEntity<ResponseTemplateVO> userDeptFallback(Long userIdLong, Exception ex) {
+        log.info("Fallback is executed because dept service is down!", ex.getMessage());
+        UserResponse userX = userService.findByUserId(userIdLong);
+        Department dept = new Department();
+        dept.setDepartmentId(1101L);
+        dept.setDepartmentName("setDepartmentName");
+        dept.setDepartmentCode("setDepartmentCode");
+        dept.setDepartmentAddress("setDepartmentAddress");
+
+        ResponseTemplateVO vo = new ResponseTemplateVO();
+        vo.setStatus(1);
+        vo.setMessage("success");
+        vo.setDepartment(dept);
+        vo.setUserX(userX.getUserX());
+        return new ResponseEntity<>(vo, HttpStatus.OK);
+    }
+
 }
