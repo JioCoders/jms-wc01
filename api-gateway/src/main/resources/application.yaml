@@ -1,3 +1,5 @@
+server:
+  port: 8090
 spring:
   application:
     name: api-gateway
@@ -6,11 +8,11 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: user-service
-          uri: lb//:user-service
-          predicates:
-            - Path=/user/**
-        - id: department-service
-          uri: lb//:department-service
-          predicates:
-            - Path=/departments/**
+      - id: user-service
+        uri: lb//:user-service
+        predicates:
+          - Path=/user/**
+      - id: department-service
+        uri: lb//:department-service
+        predicates:
+          - Path=/dept/**

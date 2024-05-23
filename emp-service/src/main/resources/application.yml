@@ -1,0 +1,23 @@
+spring:
+  application:
+      name: emp-service
+  config:
+    import: "optional:configserver:http://localhost:8088"
+  jpa:
+    hibernate:
+      ddl-auto: update
+  data:
+    mongodb:
+      uri: <put url here>
+      database: tododb
+      authentication-database: admin
+
+#   h2:
+#     console.enabled: true
+#   datasource:
+#     url: jdbc:h2:file:/h2db/deptdb
+#     username: sa
+#     password: pass
+#     driverClassName: org.h2.Driver
+
+  

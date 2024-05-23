@@ -20,7 +20,7 @@ import com.harry.departmentservice.service.DepartmentService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/departments")
+@RequestMapping("/dept")
 @Slf4j
 public class DepartmentController {
 

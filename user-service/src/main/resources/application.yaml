@@ -3,6 +3,19 @@ spring:
       name: user-service
   config:
     import: "optional:configserver:http://localhost:8088"
+
+  datasource: 
+    url: jdbc:mysql://localhost:3306/tododb
+    username: root
+    password: mysql
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      dialect: org.hibernate.dialect.MySQL8Dialect
 #   h2:
 #     console.enabled: true
 # spring.sql.init.platform=h2

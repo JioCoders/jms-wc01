@@ -2,6 +2,61 @@
     "configurations": [
         {
             "type": "java",
+            "name": "EmpServiceApplication",
+            "request": "launch",
+            "mainClass": "com.jiocoders.empservice.EmpServiceApplication",
+            "projectName": ""
+        },
+        {
+            "type": "java",
+            "name": "TaskServiceApplication",
+            "request": "launch",
+            "mainClass": "com.jiocoders.taskservice.TaskServiceApplication",
+            "projectName": ""
+        },
+        {
+            "type": "java",
+            "name": "ConfigCloudApplication",
+            "request": "launch",
+            "mainClass": "com.jiocoder.configcloud.ConfigCloudApplication"
+        },
+        {
+            "type": "java",
+            "name": "ApiGatewayApplication",
+            "request": "launch",
+            "mainClass": "com.harry.apigateway.ApiGatewayApplication",
+            "projectName": "api-gateway"
+        },
+        {
+            "type": "java",
+            "name": "ServiceRegistryApplication",
+            "request": "launch",
+            "mainClass": "com.harry.serviceregistry.ServiceRegistryApplication",
+            "projectName": "service-registry"
+        },
+        {
+            "type": "java",
+            "name": "CloudGatewayApplication",
+            "request": "launch",
+            "mainClass": "com.harry.cloudgateway.CloudGatewayApplication",
+            "projectName": "cloud-gateway"
+        },
+        {
+            "type": "java",
+            "name": "DepartmentServiceApplication",
+            "request": "launch",
+            "mainClass": "com.harry.departmentservice.DepartmentServiceApplication",
+            "projectName": "department-service"
+        },
+        {
+            "type": "java",
+            "name": "UserServiceApplication",
+            "request": "launch",
+            "mainClass": "com.harry.userservice.UserServiceApplication",
+            "projectName": "user-service"
+        },
+        {
+            "type": "java",
             "name": "Spring Boot-ConfigServerApplication<config-server>",
             "request": "launch",
             "cwd": "${workspaceFolder}",

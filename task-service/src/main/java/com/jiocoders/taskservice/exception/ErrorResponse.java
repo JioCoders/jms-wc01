@@ -1,0 +1,21 @@
+package com.jiocoders.taskservice.exception;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ErrorResponse {
+
+    private int status;
+    private String message;
+    private boolean error;
+    private Object data;
+
+    public ErrorResponse(String message) {
+        super();
+        this.message = message;
+    }
+}

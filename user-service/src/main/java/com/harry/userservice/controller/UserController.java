@@ -1,5 +1,7 @@
 package com.harry.userservice.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,25 +12,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 import com.harry.userservice.VO.Department;
 import com.harry.userservice.VO.ResponseTemplateVO;
 import com.harry.userservice.entity.UserX;
-import com.harry.userservice.service.UserService;
+import com.harry.userservice.model.req.ReqLogin;
+import com.harry.userservice.model.res.ResLogin;
+import com.harry.userservice.service.api.UserService;
+import com.harry.userservice.swagger.UserInfo;
 
-import brave.http.HttpResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
-@RequestMapping("/users")
-public class UserController {
+@RequestMapping("/user")
+public class UserController implements UserInfo {
 
     @Autowired
     private UserService userService;
+
+    @PostMapping("/login")
+    public ResponseEntity<ResLogin> loginUser(@RequestBody ReqLogin request) {
+        log.info("UserController => loginUser()=>" + request.getEmail());
+        return userService.loginUser(request);
+    }
 
     @PostMapping("/save")
     public UserResponse saveUser(@RequestBody UserX userX) {
@@ -43,9 +51,9 @@ public class UserController {
     }
 
     @GetMapping("/findByUserId/{id}")
-    public UserResponse findByUserId(@PathVariable("id") Long userIdLong) {
-        log.info("UserController =======> findByUserId()" + userIdLong);
-        return userService.findByUserId(userIdLong);
+    public UserResponse findByUserId(@PathVariable("id") int userId) {
+        log.info("UserController =======> findByUserId()" + userId);
+        return userService.findByUserId(userId);
     }
 
     int retryCount = 1;
@@ -53,20 +61,20 @@ public class UserController {
     @GetMapping("/vo/{id}")
     @CircuitBreaker(name = "userDeptBreaker", fallbackMethod = "userDeptFallback")
     @Retry(name = "userDeptRetry", fallbackMethod = "userDeptFallback")
-    public ResponseEntity<ResponseTemplateVO> getUserWithDepartment(@PathVariable("id") Long userIdLong) {
-        log.info("UserController =======> getUserWithDepartment()" + userIdLong);
+    public ResponseEntity<ResponseTemplateVO> getUserWithDepartment(@PathVariable("id") int userId) {
+        log.info("UserController =======> getUserWithDepartment()" + userId);
         log.info("retryCount=====> {}", retryCount);
         retryCount++;
         if (retryCount > 3)
             retryCount = 1;
-        ResponseTemplateVO vo = userService.getUserWithDepartment(userIdLong);
+        ResponseTemplateVO vo = userService.getUserWithDepartment(userId);
         return new ResponseEntity<>(vo, HttpStatus.OK);
     }
 
     // creatting fallback method for Circuit-Breaker and retry
-    public ResponseEntity<ResponseTemplateVO> userDeptFallback(Long userIdLong, Exception ex) {
+    public ResponseEntity<ResponseTemplateVO> userDeptFallback(int userId, Exception ex) {
         log.info("Fallback is executed because dept service is down!", ex.getMessage());
-        UserResponse userX = userService.findByUserId(userIdLong);
+        UserResponse userX = userService.findByUserId(userId);
         Department dept = new Department();
         dept.setDepartmentId(1101L);
         dept.setDepartmentName("setDepartmentName-dummy");

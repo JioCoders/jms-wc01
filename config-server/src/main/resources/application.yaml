@@ -3,6 +3,6 @@ server:
 
 spring:
   application:
-      name: config-server
+    name: config-server
   profiles:
     active: native

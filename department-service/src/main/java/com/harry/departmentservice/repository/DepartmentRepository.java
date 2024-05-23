@@ -9,9 +9,8 @@ import com.harry.departmentservice.entity.Department;
  * DepartmentRepository
  */
 @Repository
-public interface DepartmentRepository extends JpaRepository<Department, Long>{
+public interface DepartmentRepository extends JpaRepository<Department, Long> {
 
     Department findByDepartmentId(Long departmentId);
 
-    
 }

@@ -8,9 +8,9 @@ import org.springframework.web.service.annotation.HttpExchange;
 @HttpExchange
 public interface UserClient {
 
-    @GetExchange("/users/findByUserId/{id}")
+    @GetExchange("/user/findByUserId/{id}")
     public UserResponse findByUserId(@PathVariable("id") Long userIdLong);
 
-    @GetExchange("/users/findAll")
+    @GetExchange("/user/findAll")
     public List<UserX> findAllUsers();
 }
