@@ -12,7 +12,7 @@ import com.jiocoders.empservice.service.api.EmpService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class TaskRunnable implements CommandLineRunner {
+public class TaskRunnable extends MultithreadingTask implements CommandLineRunner {
 
     @Autowired
     EmpService emplyeeService;
@@ -22,8 +22,8 @@ public class TaskRunnable implements CommandLineRunner {
         log.info("---------> Inserting dummy data in Employee table");
         emplyeeService.save(new Employee("Ramesh", "Fadatare", "8888888889", "ramesh@gmail.com", true));
         emplyeeService.save(new Employee("Tom", "Cruise", "8888888889", "tom@gmail.com", true));
-        emplyeeService.save(new Employee("John", "Cena", "8888888889", "john@gmail.com", true));
-        emplyeeService.save(new Employee("tony", "stark", "8888888889", "stark@gmail.com", true));
+        // emplyeeService.save(new Employee("John", "Cena", "8888888889", "john@gmail.com", true));
+        // emplyeeService.save(new Employee("tony", "stark", "8888888889", "stark@gmail.com", true));
 
         long id1 = 1L;
         emplyeeService.findById(id1).ifPresent(System.out::println);
@@ -42,6 +42,11 @@ public class TaskRunnable implements CommandLineRunner {
         log.info("---------> Initial data inserted in Employee table");
 
         // emplyeeService.deleteById(3L);
+
+        MultithreadingTask task = new MultithreadingTask();
+        task.start();
+        log.info("=====New task started====> " + task.getName());
+        super.start();
     }
 
 }
