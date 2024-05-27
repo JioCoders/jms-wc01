@@ -60,13 +60,14 @@ public class UserController implements UserInfo {
 
     @GetMapping("/vo/{id}")
     @CircuitBreaker(name = "userDeptBreaker", fallbackMethod = "userDeptFallback")
-    @Retry(name = "userDeptRetry", fallbackMethod = "userDeptFallback")
+    // @Retry(name = "userDeptRetry", fallbackMethod = "userDeptFallback")
     public ResponseEntity<ResponseTemplateVO> getUserWithDepartment(@PathVariable("id") int userId) {
         log.info("UserController =======> getUserWithDepartment()" + userId);
         log.info("retryCount=====> {}", retryCount);
         retryCount++;
-        if (retryCount > 3)
+        if (retryCount > 3) {
             retryCount = 1;
+        }
         ResponseTemplateVO vo = userService.getUserWithDepartment(userId);
         return new ResponseEntity<>(vo, HttpStatus.OK);
     }

@@ -1,11 +1,14 @@
 package com.harry.userservice.service.api;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
+
+    private static final String KEY_USER = "USER";
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    // private HashOperations hashOperations = redisTemplate.opsForHash();
 
     @Autowired
     private JwtService jwtService;
@@ -82,7 +92,7 @@ public class UserServiceImpl implements UserService {
             Optional<Location> repoLocation = locationRepository.findActiveByLocationId(user.getLocationId());
             LocationData locationData = new LocationData();
             if (repoLocation.isPresent()) {
-            Location location = repoLocation.get();
+                Location location = repoLocation.get();
                 locationData.setLocationId(location.getLocationId());
                 locationData.setLocationName(location.getLocationName());
                 locationData.setLatitude(location.getLatitude());
@@ -128,12 +138,17 @@ public class UserServiceImpl implements UserService {
     public UserResponse saveUser(UserX userX) {
         log.info("UserService =======> findByUserId()" + userX.toString());
         UserResponse res = new UserResponse();
-        UserX userX2;
+        userX.setCompanyId(1);
+        userX.setCreatedAt(System.currentTimeMillis());
+        userX.setUpdatedAt(System.currentTimeMillis());
+        UserX user;
         try {
-            userX2 = userRepository.save(userX);
+            user = userRepository.save(userX);
             res.setCode(1);
             res.setMessage("Success");
-            res.setUserX(userX2);
+            res.setUserX(user);
+
+            redisTemplate.opsForHash().put(KEY_USER, user.getUserId().toString(), user);
         } catch (Exception e) {
             res.setCode(-1);
             res.setMessage(e.getMessage());
@@ -145,9 +160,14 @@ public class UserServiceImpl implements UserService {
     public UserResponse findByUserId(int userId) {
         log.info("UserService =======> findByUserId()" + userId);
         UserResponse res = new UserResponse();
-        UserX userX2;
+        UserX userX2 = null;
         try {
-            userX2 = userRepository.findByUserId(userId);
+            // userX2 = (UserX) redisTemplate.opsForHash().get(KEY_USER,
+            //         String.valueOf(userId));
+
+            if (userX2 == null) {
+                userX2 = userRepository.findByUserId(userId);
+            }
             res.setCode(1);
             res.setMessage("Success");
             res.setUserX(userX2);
@@ -161,6 +181,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseTemplateVO getUserWithDepartment(int userId) {
         log.info("UserService =======> getUserWithDepartment()=" + userId);
+
         UserResponse userX = findByUserId(userId);
         Department dept = restTemplate.getForObject("http://DEPARTMENT-SERVICE/dept/find/" + userId,
                 Department.class);
@@ -186,7 +207,20 @@ public class UserServiceImpl implements UserService {
         // System.out.println("Error: " + e.getMessage());
         // }
 
-        return userRepository.findAll();
+        List<UserX> users = new ArrayList<>();
+        try {
+            List<Object> objects = redisTemplate.opsForHash().values(KEY_USER);
+            // List<UserX> objects = redisTemplate.opsForHash().entries(KEY_USER);
+            users = objects.stream()
+                    .map(element -> (UserX) element)
+                    .collect(Collectors.toList());
+
+            // result = redisTemplate.opsForHash().get(KEY_USER, "554");
+            // log.info("KEY_USER------------>" + result);
+        } catch (Exception e) {
+            log.info("KEY_USER------------>" + e.getMessage());
+        }
+        return users;
     }
 
 }

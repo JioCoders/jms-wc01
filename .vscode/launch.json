@@ -32,7 +32,8 @@
             "name": "ServiceRegistryApplication",
             "request": "launch",
             "mainClass": "com.harry.serviceregistry.ServiceRegistryApplication",
-            "projectName": "service-registry"
+            "projectName": "service-registry",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=53541 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=service-registry"
         },
         {
             "type": "java",
@@ -46,14 +47,16 @@
             "name": "DepartmentServiceApplication",
             "request": "launch",
             "mainClass": "com.harry.departmentservice.DepartmentServiceApplication",
-            "projectName": "department-service"
+            "projectName": "department-service",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=53735 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=department-service"
         },
         {
             "type": "java",
             "name": "UserServiceApplication",
             "request": "launch",
             "mainClass": "com.harry.userservice.UserServiceApplication",
-            "projectName": "user-service"
+            "projectName": "user-service",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=53608 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=user-service"
         },
         {
             "type": "java",
@@ -62,6 +65,16 @@
             "cwd": "${workspaceFolder}",
             "mainClass": "com.harry.configserver.ConfigServerApplication",
             "projectName": "config-server",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ConfigCloudApplication<config-cloud>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.jiocoder.configcloud.ConfigCloudApplication",
+            "projectName": "config-cloud",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
         }

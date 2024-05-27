@@ -4,6 +4,12 @@ spring:
   config:
     import: "optional:configserver:http://localhost:8088"
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      username: default
+      password: password
   datasource: 
     url: jdbc:mysql://localhost:3306/tododb
     username: root
@@ -63,8 +69,9 @@ resilience4j:
         permitted-number-of-calls-in-half-open-state: 3
         sliding-window-size: 10
         sliding-window-type: count-based
-  retry:
-    instances:
-      userDeptRetry: 
-        max-attempts: 3
-        wait-duration: 5s
+  # retry:
+  #   instances:
+  #     userDeptRetry: 
+  #       max-attempts: 3
+  #       wait-duration: 5s
+
